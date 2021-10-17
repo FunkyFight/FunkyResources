@@ -1,5 +1,6 @@
 # FunkyResources
 GITHUB: https://github.com/FunkyFight/FunkyResources
+
 ## Description
 
 FunkyResources est un moyen complètement nouveau de créer ses propres items avec ses propres textures personnalisées.
@@ -44,6 +45,20 @@ Les catégories sont particulièrement utiles pour exporter tout ce que vous ave
 // index.js
 pack.getAssets().accessOrCreateCategory("testcategory").addItem("test", "brick", "neptunite_ingot.png", api.item_type_enum.generated, null) //null = modèle par défaut
 ```
+
+### Ajouter un GUI
+Les GUIs utilisent la plage de caractères unicodes vides (~\uE000 à ~\uFFFF). **Assurez vous bien d'avoir votre jeu en anglais.** (todo: support pour les autres langues)
+```javascript
+// index.js
+pack.getAssets().accessOrCreateCategory("testcategory").addGUI("mygui", "gui_textures\\gui.png", 13, 221)
+```
+
+Argument 1: Nom du gui
+Argument 2: Chemin d'accès à la texture
+Argument 3: Hauteur d'affichage
+Argument 4: Taille de la texture
+
+Afin de pouvoir positionner correctement votre GUI, des espaces négatifs sont également importés (cf font/default.json)
 
 ### Types de modèles d'items
 
