@@ -74,7 +74,8 @@ class Category {
         items: [],
         blocks: [],
         entity: [],
-        gui: []
+        gui: [],
+        font: []
     })
 
     this.data = this.resourcepack.data.assets.filter(e => e.name === categoryname)[0]
@@ -88,44 +89,60 @@ class Category {
 
 
 
-  addItem(item_name, minecraft_item, path_to_image_file, type, custom_model) {
+    addItem(item_name, minecraft_item, path_to_image_file, type, custom_model) {
 
-    for(var it in this.data.items) {
-        if(this.data.items[it].name == item_name && this.data.items[it].mc_item == minecraft_item) {
-            this.data.items[it] = {
-                name: item_name,
-                mc_item: minecraft_item,
-                image: path_to_image_file,
-                type: type
+        for(var it in this.data.items) {
+            if(this.data.items[it].name == item_name && this.data.items[it].mc_item == minecraft_item) {
+                this.data.items[it] = {
+                    name: item_name,
+                    mc_item: minecraft_item,
+                    image: path_to_image_file,
+                    type: type
+                }
+                console.log(chalk.greenBright(`      ↳ Item ${item_name} (=> ${minecraft_item}) modifié !`))
+                return this
             }
-            console.log(chalk.greenBright(`      ↳ Item ${item_name} (=> ${minecraft_item}) modifié !`))
-            return this
         }
+        this.data.items.push({
+            name: item_name,
+            mc_item: minecraft_item,
+            image: path_to_image_file,
+            type: type,
+            custom_model: custom_model
+        })
+        console.log(chalk.greenBright(`      ↳ Item ${item_name} (=> ${minecraft_item}) créé !`))
+        return this
     }
-    this.data.items.push({
-        name: item_name,
-        mc_item: minecraft_item,
-        image: path_to_image_file,
-        type: type,
-        custom_model: custom_model
-    })
-    console.log(chalk.greenBright(`      ↳ Item ${item_name} (=> ${minecraft_item}) crée !`))
-    return this
-  }
 
-  addGUI(guiname, image_path, ascent, height) {
-    this.data.gui = []
+    addGUI(guiname, image_path, ascent, height) {
+        this.data.gui = []
 
-    this.data.gui.push({
-        name: guiname,
-        image: image_path,
-        ascent: ascent,
-        height: height
-    })
-    console.log(chalk.greenBright(`      ↳ GUI ${guiname} (Img = ${image_path}) crée !`))
-    return this
-  }
+        this.data.gui.push({
+            name: guiname,
+            image: image_path,
+            ascent: ascent,
+            height: height
+        })
+        console.log(chalk.greenBright(`      ↳ GUI ${guiname} (Img = ${image_path}) créé !`))
+        return this
+    }
+
+    addFontCharacter(charname, image_path, ascent, height) {
+        this.data.font = []
+
+        this.data.font.push({
+            name: charname,
+            image: image_path,
+            ascent: ascent,
+            height: height
+        })
+        console.log(chalk.greenBright(`      ↳ Caractère unicode ${charname} (Img = ${image_path}) créé !`))
+        return this
+    }
+
 }
+
+
 
 const item_type_enum = Object.freeze({
     handheld: "item/handheld",

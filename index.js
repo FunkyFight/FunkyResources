@@ -11,7 +11,7 @@ const { category_menu } = require('./menu');
 ///IMPORTANT DATA
 const pack_json = {}
 var path = ""
-
+console.log(__dirname)
 console.log(
     chalk.yellow(
         figlet.textSync("FunkyResources", {horizontalLayout: 'full'})
@@ -77,6 +77,7 @@ const run = async() => {
                     fs.mkdirSync(`./${r.name}/assets/minecraft/textures/`)
                     fs.mkdirSync(`./${r.name}/assets/minecraft/textures/item`)
                     fs.mkdirSync(`./${r.name}/assets/minecraft/textures/gui_font`)
+                    fs.mkdirSync(`./${r.name}/assets/minecraft/textures/font`)
                     fs.mkdirSync(`./${r.name}/assets/minecraft/models`)
                     fs.mkdirSync(`./${r.name}/assets/minecraft/models/item`)
                     fs.mkdirSync(`./${r.name}/assets/minecraft/font`)
@@ -90,6 +91,9 @@ const run = async() => {
                 console.log(chalk.blueBright("Génération des items..."))
                 var models_items = new Map()
                 var models = new Map()
+
+                var UNICODE_INDEX = -1
+
                 for(var a in data.assets[asset].items) {
                     if(!models_items.has(data.assets[asset].items[a].mc_item.toLowerCase())) {
                         models_items.set(data.assets[asset].items[a].mc_item.toLowerCase(), {
@@ -141,61 +145,87 @@ const run = async() => {
 
                     
                 }
+                    //Creating models files
+                    for(const [k, v] of models_items.entries()) {
+                        fs.writeFileSync(`./${r.name}/assets/minecraft/models/item/${k}.json`, JSON.stringify(v), {flag: "w"})
+                    }
 
-                //Creating models files
-                
-                for(const [k, v] of models_items.entries()) {
-                    fs.writeFileSync(`./${r.name}/assets/minecraft/models/item/${k}.json`, JSON.stringify(v), {flag: "w"})
+                    for(const [k, v] of models.entries()) {
+                        fs.writeFileSync(`./${r.name}/assets/minecraft/models/item/${v.funkyres_item}/${k}.json`, JSON.stringify(v), {flag: "w"})
+                    }
+                    console.log(chalk.blueBright("Items générés avec succès !"))
+            
+                var defaultjson = {
+                        providers: [
+                            
+                        ]
                 }
-
-                for(const [k, v] of models.entries()) {
-                    fs.writeFileSync(`./${r.name}/assets/minecraft/models/item/${v.funkyres_item}/${k}.json`, JSON.stringify(v), {flag: "w"})
-                }
-                console.log(chalk.blueBright("Items générés avec succès !"))
-                
-                ///// GUIs
-                console.log(chalk.blueBright("Génération des GUIs"))
-
-                //default.json
-                defaultjson = {
-                    providers: [
-                        
-                    ]
-                }
-
-                for(var a in data.assets[asset].gui) {
-                    current_gui = data.assets[asset].gui[a]
-                    defaultjson.providers.push({
-                        type: "bitmap",
-                        file: "minecraft:gui_font/" + current_gui.name.toLowerCase() + ".png",
-                        ascent: data.assets[asset].gui[a].ascent,
-                        height: data.assets[asset].gui[a].height,
-                        chars: [utils.getUnicodeIndex(a)]
-                    })
-
+                ///Guis
+                if(data.assets[asset].gui.length > 0) {
                     
-                    fs.copyFile(current_gui.image, `./${r.name}/assets/minecraft/textures/gui_font/${current_gui.name.toLowerCase()}.png`, (err) => {
-                        if(err) console.log(err)
-                    })
+                    console.log(chalk.blueBright("Génération des GUIs"))
 
-                    fs.copyFile("font_data\\en_us.json", `./${r.name}/assets/minecraft/lang/en_us.json`, (err) => {
-                        if(err) console.log(err)
-                    })
+                    //default.json
+                    
+
+                    ///// GUIs
+                    for(var a in data.assets[asset].gui) {
+                        UNICODE_INDEX++
+                        current_gui = data.assets[asset].gui[a]
+                        defaultjson.providers.push({
+                            type: "bitmap",
+                            file: "minecraft:gui_font/" + current_gui.name.toLowerCase() + ".png",
+                            ascent: data.assets[asset].gui[a].ascent,
+                            height: data.assets[asset].gui[a].height,
+                            chars: [utils.getUnicodeIndex(UNICODE_INDEX)]
+                        })
+
+                        
+                        fs.copyFile(current_gui.image, `./${r.name}/assets/minecraft/textures/gui_font/${current_gui.name.toLowerCase()}.png`, (err) => {
+                            if(err) console.log(err)
+                        })
+
+                        
+                    }
+
+                   
+                    
+                    // Déplacement
                 }
 
-                console.log(chalk.blueBright("Implémentation des espaces négatifs"))
-                const negative_spaces = require("./font_data/negative_spaces.json")
-                for(var a of negative_spaces) {
-                    defaultjson.providers.push(a)
+                // Unicode Characters
+                if(data.assets[asset].font.length > 0) {
+                    for(var a of data.assets[asset].font) {
+                        UNICODE_INDEX++
+                        defaultjson.providers.push({
+                            type: "bitmap",
+                            file: "minecraft:font/" + a.name.toLowerCase() + ".png",
+                            ascent: a.ascent,
+                            height: a.height,
+                            chars: [utils.getUnicodeIndex(UNICODE_INDEX)]
+                        })
+                        fs.copyFile(a.image, `./${r.name}/assets/minecraft/textures/font/${a.name.toLowerCase()}.png`, (err) => {
+                            if(err) console.log(err)
+                        })
+                    }
                 }
-
-                utils.copyFolderRecursiveSync(`font_data\\font`, `./${r.name}/assets/minecraft/textures`)
-
-                fs.writeFileSync(`./${r.name}/assets/minecraft/font/default.json`, JSON.stringify(defaultjson, null, 4))
-                
-                // Déplacement
-
             }
+
+            //Negative space
+            console.log(chalk.blueBright("Implémentation des espaces négatifs"))
+            const negative_spaces = require("./font_data/negative_spaces.json")
+            for(var a of negative_spaces) {
+                defaultjson.providers.push(a)
+            }
+
+            utils.copyFolderRecursiveSync(`node_modules\\funkyresources\\font_data\\font`, `./${r.name}/assets/minecraft/textures`)
+
+            fs.writeFileSync(`./${r.name}/assets/minecraft/font/default.json`, JSON.stringify(defaultjson, null, 4))
+
+            fs.copyFile("node_modules\\funkyresources\\font_data\\en_us.json", `./${r.name}/assets/minecraft/lang/en_us.json`, (err) => {
+                if(err) console.log(err)
+            })
+
         } else {
             console.log(chalk.redBright("Le dossier demandé n'existe pas"))
         }
