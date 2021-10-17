@@ -1,0 +1,31 @@
+{
+    "assets": [
+        {
+            "name": "Ingots",
+            "items": [
+                {
+                    "name": "neptunite_ingot",
+                    "mc_item": "brick",
+                    "image": "image_textures\\neptunite_ingot.png",
+                    "type": "item/generated",
+                    "custom_model": null
+                }
+            ],
+            "blocks": [],
+            "entity": [],
+            "gui": []
+        },
+        {
+            "name": "GUIs",
+            "items": [],
+            "blocks": [],
+            "entity": [],
+            "gui": [
+                {
+                    "name": "coffre_clacos",
+                    "image": "gui_textures\\gui.png"
+                }
+            ]
+        }
+    ]
+}

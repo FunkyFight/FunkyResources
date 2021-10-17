@@ -76,13 +76,18 @@ const run = async() => {
                     fs.mkdirSync(`./${r.name}/assets/minecraft`)
                     fs.mkdirSync(`./${r.name}/assets/minecraft/textures/`)
                     fs.mkdirSync(`./${r.name}/assets/minecraft/textures/item`)
+                    fs.mkdirSync(`./${r.name}/assets/minecraft/textures/gui_font`)
                     fs.mkdirSync(`./${r.name}/assets/minecraft/models`)
                     fs.mkdirSync(`./${r.name}/assets/minecraft/models/item`)
+                    fs.mkdirSync(`./${r.name}/assets/minecraft/font`)
+                    fs.mkdirSync(`./${r.name}/assets/minecraft/lang`)
                     console.log(chalk.blueBright("Création des répertoires terminée"))
                 }
 
-                //Generating models
-                console.log(chalk.blueBright("Génération des modèles"))
+                
+
+                ///// ITEMS
+                console.log(chalk.blueBright("Génération des items..."))
                 var models_items = new Map()
                 var models = new Map()
                 for(var a in data.assets[asset].items) {
@@ -112,10 +117,10 @@ const run = async() => {
                     
 
                     if(!fs.existsSync(`./${r.name}/assets/minecraft/models/item/${data.assets[asset].items[a].mc_item.toLowerCase()}`)) fs.mkdirSync(`./${r.name}/assets/minecraft/models/item/${data.assets[asset].items[a].mc_item.toLowerCase()}`)
-                    console.log(chalk.blueBright("Génération des modèles terminées"))
+     
 
                     //Generating each model
-                    console.log(chalk.blueBright("Génération des autres modèles"))
+        
                     if(data.assets[asset].items[a].custom_model == null) {
 
                         
@@ -129,17 +134,16 @@ const run = async() => {
                         }
                         )
                     }
-                    console.log(chalk.blueBright("Génération des autres modèles terminée"))
+               
                     
                     //Copying texture to dest
                     fs.copyFileSync(data.assets[asset].items[a].image, `./${r.name}/assets/minecraft/textures/item/${data.assets[asset].items[a].name}.png`)
-                    console.log(chalk.blueBright("Transfert des images"))
 
                     
                 }
 
                 //Creating models files
-                console.log(chalk.blueBright("Génération des fichiers"))
+                
                 for(const [k, v] of models_items.entries()) {
                     fs.writeFileSync(`./${r.name}/assets/minecraft/models/item/${k}.json`, JSON.stringify(v), {flag: "w"})
                 }
@@ -147,10 +151,50 @@ const run = async() => {
                 for(const [k, v] of models.entries()) {
                     fs.writeFileSync(`./${r.name}/assets/minecraft/models/item/${v.funkyres_item}/${k}.json`, JSON.stringify(v), {flag: "w"})
                 }
+                console.log(chalk.blueBright("Items générés avec succès !"))
                 
-                console.log(chalk.blueBright("Génération des fichiers terminée"))
+                ///// GUIs
+                console.log(chalk.blueBright("Génération des GUIs"))
 
+                //default.json
+                defaultjson = {
+                    providers: [
+                        
+                    ]
+                }
+
+                for(var a in data.assets[asset].gui) {
+                    current_gui = data.assets[asset].gui[a]
+                    defaultjson.providers.push({
+                        type: "bitmap",
+                        file: "minecraft:gui_font/" + current_gui.name.toLowerCase() + ".png",
+                        ascent: 0,
+                        height: 0,
+                        chars: [utils.getUnicodeIndex(a)]
+                    })
+
+                    
+                    fs.copyFile(current_gui.image, `./${r.name}/assets/minecraft/textures/gui_font/${current_gui.name.toLowerCase()}.png`, (err) => {
+                        if(err) console.log(err)
+                    })
+
+                    fs.copyFile("font_data\\en_us.json", `./${r.name}/assets/minecraft/lang/en_us.json`, (err) => {
+                        if(err) console.log(err)
+                    })
+                }
+
+                console.log(chalk.blueBright("Implémentation des espaces négatifs"))
+                const negative_spaces = require("./font_data/negative_spaces.json")
+                for(var a of negative_spaces) {
+                    defaultjson.providers.push(a)
+                }
+
+                utils.copyFolderRecursiveSync(`font_data\\font`, `./${r.name}/assets/minecraft/textures`)
+
+                fs.writeFileSync(`./${r.name}/assets/minecraft/font/default.json`, JSON.stringify(defaultjson, null, 4))
                 
+                // Déplacement
+
             }
         } else {
             console.log(chalk.redBright("Le dossier demandé n'existe pas"))

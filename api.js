@@ -73,7 +73,8 @@ class Category {
         name: categoryname,
         items: [],
         blocks: [],
-        entity: []
+        entity: [],
+        gui: []
     })
 
     this.data = this.resourcepack.data.assets.filter(e => e.name === categoryname)[0]
@@ -109,6 +110,17 @@ class Category {
         custom_model: custom_model
     })
     console.log(chalk.greenBright(`      ↳ Item ${item_name} (=> ${minecraft_item}) crée !`))
+    return this
+  }
+
+  addGUI(guiname, image_path) {
+    this.data.gui = []
+
+    this.data.gui.push({
+        name: guiname,
+        image: image_path
+    })
+    console.log(chalk.greenBright(`      ↳ GUI ${guiname} (Img = ${image_path}) crée !`))
     return this
   }
 }

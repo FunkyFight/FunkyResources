@@ -67,4 +67,3 @@ Retournez dans le cli et sélectionnez 2. Donnez le nom de votre pack. Le pack e
 ```
 node node_modules/funkyresources/index.js
 ```
-
