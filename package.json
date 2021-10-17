@@ -1,6 +1,6 @@
 {
   "name": "funkyresources",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "description": "A tool to easily create minecraft resource pack (FRENCH)",
   "main": "index.js",
   "scripts": {

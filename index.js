@@ -168,8 +168,8 @@ const run = async() => {
                     defaultjson.providers.push({
                         type: "bitmap",
                         file: "minecraft:gui_font/" + current_gui.name.toLowerCase() + ".png",
-                        ascent: 0,
-                        height: 0,
+                        ascent: data.assets[asset].gui[a].ascent,
+                        height: data.assets[asset].gui[a].height,
                         chars: [utils.getUnicodeIndex(a)]
                     })
 

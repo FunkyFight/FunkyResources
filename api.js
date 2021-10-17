@@ -113,12 +113,14 @@ class Category {
     return this
   }
 
-  addGUI(guiname, image_path) {
+  addGUI(guiname, image_path, ascent, height) {
     this.data.gui = []
 
     this.data.gui.push({
         name: guiname,
-        image: image_path
+        image: image_path,
+        ascent: ascent,
+        height: height
     })
     console.log(chalk.greenBright(`      ↳ GUI ${guiname} (Img = ${image_path}) crée !`))
     return this

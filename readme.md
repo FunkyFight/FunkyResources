@@ -1,4 +1,5 @@
 # FunkyResources
+GITHUB: https://github.com/FunkyFight/FunkyResources
 ## Description
 
 FunkyResources est un moyen complètement nouveau de créer ses propres items avec ses propres textures personnalisées.
